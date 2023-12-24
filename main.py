@@ -195,7 +195,7 @@ def method_one(target_n, mapped)-> list:
     [systems.append(i) for i in mapped]
 
     res = []
-    for n in range(1, target_n+1):
+    for n in range(target_n):
         connected = False
         rolls = 0
         while not connected:
@@ -217,7 +217,7 @@ def method_two(target_n, mapped)-> list:
     [systems.append(i) for i in mapped]
 
     res = []
-    for n in range(1, target_n+1):
+    for n in range(target_n):
         connected = False
         rolls = 0
         system_a = random.choice(systems)
@@ -244,8 +244,8 @@ def med(l)-> int:
     return k[len(k)//2]
 
 def main():
-    jump_distance = 8
-    simulate_connections = 1000000
+    jump_distance = 8 # jump distance of lvl 5 black ops
+    simulate_connections = 1_000_000
 
     maintain_sde()
     systems = system_filter(extract_sde_solarsystem_data())
@@ -253,6 +253,7 @@ def main():
     mapped = assign_jumps(cubed, jump_distance)
     roll_one = method_one(simulate_connections, mapped)
     roll_two = method_two(simulate_connections, mapped)
+
     print(f"Molemmat rullataan, mediaani {med(roll_one)}, keskiarvo {av(roll_one)}")
     print(f"Huonompi rullataan, mediaani {med(roll_two)}, keskiarvo {av(roll_two)}")
 
