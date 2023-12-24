@@ -71,7 +71,7 @@ def system_filter(systems)-> list:
     "Stain",
     "Syndicate",
     "Venal",
-	"Branch",
+    "Branch",
     "Cache",
     "Catch",
     "Cloud Ring",
@@ -228,27 +228,28 @@ def method_two(target_n, mapped, systems)-> list:
 
 def main():
     jump_distance = 8
-    simulated_rolls = 5000
+    simulate_connections = 5001
 
     maintain_sde()
     systems = system_filter(extract_sde_solarsystem_data())
     cubed = cubeify(systems, jump_distance)
     mapped = assign_jumps(cubed, jump_distance)
-    one = method_one(simulated_rolls, mapped, systems)
-    two = method_two(simulated_rolls, mapped, systems)
+    one = method_one(simulate_connections, mapped, systems)
+    two = method_two(simulate_connections, mapped, systems)
 
     av_one = 0
     for i in one:
         av_one += i
-    av_one = av_one / len(one)
+    av_one = av_one / simulate_connections
 
     av_two = 0
     for i in two:
         av_two += i
-    av_two = av_two / len(two)
+    av_two = av_two / simulate_connections
 
-    print(av_one)
-    print(av_two)
-    
+    one.sort()
+    two.sort()
+    print(f"method one: average: {av_one}, median: {one[simulate_connections//2]}")
+    print(f"method two: average: {av_two}, median: {two[simulate_connections//2]}")
 
 main()
