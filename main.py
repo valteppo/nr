@@ -178,19 +178,22 @@ def assign_jumps(cubed_map, max_jump_distance_ly)-> dict:
                 distance = vector_lenght(system, target)
                 if distance/ly < max_jump_distance_ly: # in range
                     if system[0] not in connections:
-                        connections[system[0]] = [target[0], target[1], distance/ly]
+                        connections[system[0]] = [target[0]]
                     else:
                         a = connections[system[0]]
-                        a.append([target[0], target[1], distance/ly])
+                        a.append(target[0])
                         connections[system[0]] = a
     return connections
 
-def method_one(target_n, mapped, systems)-> list:
+def method_one(target_n, mapped)-> list:
     """
     Rolls 2 holes randomly until systems are in jump range. Records amount of rolls needed per connection.
     Repeats to target amount.
     Returns [numer of rolls for connection, ..., ...]
     """
+    systems = []
+    [systems.append(i) for i in mapped]
+
     res = []
     for n in range(1, target_n+1):
         connected = False
@@ -199,57 +202,58 @@ def method_one(target_n, mapped, systems)-> list:
             rolls += 1
             system_a = random.choice(systems)
             system_b = random.choice(systems)
-            if system_b[0] in mapped[system_a[0]]:
+            if system_b in mapped[system_a]:
                 res.append(rolls)
                 connected = True
     return res
 
-def method_two(target_n, mapped, systems)-> list:
+def method_two(target_n, mapped)-> list:
     """
-    Roll 2 holes. Keep the one with higher amount of connections, roll the other.
+    Roll 2 holes, keep the one with more connections, roll the other. Re-evaluate on each roll. Record amount or rolls needed perconnection.
     Repeats to target amount.
     Returns [numer of rolls for connection, ..., ...]
     """
+    systems = []
+    [systems.append(i) for i in mapped]
+
     res = []
     for n in range(1, target_n+1):
         connected = False
-        rolls = 1
+        rolls = 0
         system_a = random.choice(systems)
         system_b = random.choice(systems)
         while not connected:
             rolls += 1
-            if system_b[0] in mapped[system_a[0]]:
+            if system_b in mapped[system_a]:
                 res.append(rolls)
                 connected = True
-            elif len(mapped[system_b[0]]) < len(mapped[system_a[0]]):
+            elif len(mapped[system_a]) < len(mapped[system_b]):
                 system_a = system_b
             system_b = random.choice(systems)
     return res
 
+def av(l)-> float:
+    n = 0
+    for i in l:
+        n += i
+    return n / len(l)
+
+def med(l)-> int:
+    k = list(l)
+    k.sort()
+    return k[len(k)//2]
+
 def main():
     jump_distance = 8
-    simulate_connections = 5001
+    simulate_connections = 1000000
 
     maintain_sde()
     systems = system_filter(extract_sde_solarsystem_data())
     cubed = cubeify(systems, jump_distance)
     mapped = assign_jumps(cubed, jump_distance)
-    one = method_one(simulate_connections, mapped, systems)
-    two = method_two(simulate_connections, mapped, systems)
-
-    av_one = 0
-    for i in one:
-        av_one += i
-    av_one = av_one / simulate_connections
-
-    av_two = 0
-    for i in two:
-        av_two += i
-    av_two = av_two / simulate_connections
-
-    one.sort()
-    two.sort()
-    print(f"method one: average: {av_one}, median: {one[simulate_connections//2]}")
-    print(f"method two: average: {av_two}, median: {two[simulate_connections//2]}")
+    roll_one = method_one(simulate_connections, mapped)
+    roll_two = method_two(simulate_connections, mapped)
+    print(f"Molemmat rullataan, mediaani {med(roll_one)}, keskiarvo {av(roll_one)}")
+    print(f"Huonompi rullataan, mediaani {med(roll_two)}, keskiarvo {av(roll_two)}")
 
 main()
