@@ -209,7 +209,7 @@ def method_one(target_n, mapped)-> list:
 
 def method_two(target_n, mapped)-> list:
     """
-    Roll 2 holes, keep the one with more connections, roll the other. Re-evaluate on each roll. Record amount or rolls needed perconnection.
+    Roll 2 holes, keep the one with more connections, roll the other. Re-evaluate on each roll. Record amount or rolls needed per connection.
     Repeats to target amount.
     Returns [numer of rolls for connection, ..., ...]
     """
